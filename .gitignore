@@ -1,2 +1,6 @@
 .godot
 .ipynb_checkpoints
+/lib/__pycache__
+/lib/data/__pycache__
+/lib/dds/__pycache__
+/lib/utils/__pycache__
