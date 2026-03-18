@@ -4,3 +4,6 @@
 /lib/data/__pycache__
 /lib/dds/__pycache__
 /lib/utils/__pycache__
+lib/system/__pycache__/__init__.cpython-314.pyc
+lib/system/__pycache__/basic.cpython-314.pyc
+lib/system/__pycache__/cart.cpython-314.pyc
