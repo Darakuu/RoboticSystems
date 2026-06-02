@@ -6,4 +6,4 @@ func _ready() -> void:
 	pressed.connect(on_start)
 	
 func on_start():
-	pass
+	DDS.publish('start', DDS.DDS_TYPE_INT, 0)
