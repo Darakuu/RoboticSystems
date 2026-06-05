@@ -20,6 +20,11 @@ func _ready():
 	DDS.subscribe("f4")
 
 func _process(delta: float) -> void:
+	var left_x = Input.get_joy_axis(0,JOY_AXIS_LEFT_X)
+	var left_y = Input.get_joy_axis(0,JOY_AXIS_LEFT_Y)
+	var right_x = Input.get_joy_axis(0,JOY_AXIS_RIGHT_X)
+	var right_y = Input.get_joy_axis(0,JOY_AXIS_RIGHT_Y)
+	#print(left_x, " ", left_y)
 	var pose = drone.get_pose()
 	var vel = drone.get_velocity()
 	var pos = pose[0]
@@ -35,6 +40,12 @@ func _process(delta: float) -> void:
 	label_yr.text = "YR : %.3f" % [rad_to_deg(att.x)]
 	label_zr.text = "ZR : %.3f" % [rad_to_deg(att.y)]
 	
+	# joystick
+	DDS.publish("J_Left_X", DDS.DDS_TYPE_FLOAT, left_x)
+	DDS.publish("J_Left_Y", DDS.DDS_TYPE_FLOAT, left_y)
+	DDS.publish("J_Right_X", DDS.DDS_TYPE_FLOAT, right_x)
+	DDS.publish("J_Right_Y", DDS.DDS_TYPE_FLOAT, right_y)
+
 	# positions
 	DDS.publish("X", DDS.DDS_TYPE_FLOAT, pos.z)
 	DDS.publish("Y", DDS.DDS_TYPE_FLOAT, pos.x)
