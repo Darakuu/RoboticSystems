@@ -1,2 +1,3 @@
 .godot
 .ipynb_checkpoints
+*.pyc

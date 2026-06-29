@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://brl5okph3v4jw"]
+
+[ext_resource type="Script" uid="uid://bu8ygkuaqji10" path="res://swarmRobot.gd" id="1_qxj2g"]
+[ext_resource type="PackedScene" uid="uid://t5ro3qm5fttb" path="res://robot.tscn" id="2_bjysn"]
+
+[node name="SwarmRobot" type="Node3D" unique_id=1551073702]
+script = ExtResource("1_qxj2g")
+
+[node name="Robot" parent="." unique_id=1677191764 instance=ExtResource("2_bjysn")]
