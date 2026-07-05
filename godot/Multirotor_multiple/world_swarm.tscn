@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://dny5hjt64uy0j"]
 
-[ext_resource type="PackedScene" uid="uid://t5ro3qm5fttb" path="res://robot.tscn" id="1_d2j6q"]
 [ext_resource type="Script" uid="uid://blfon3x6pf5fc" path="res://reset_button.gd" id="2_j0add"]
 [ext_resource type="Script" uid="uid://b8r4t0mvm887h" path="res://start_button.gd" id="3_6ytcn"]
+[ext_resource type="Script" uid="uid://bcfn84du3abvd" path="res://swarmManager.gd" id="4_5qh0j"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ykxtl"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -53,8 +53,8 @@ shadow_enabled = true
 metadata/_edit_lock_ = true
 
 [node name="Floor" type="StaticBody3D" parent="Obstacles" unique_id=1686858667]
+transform = Transform3D(1.7, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 physics_material_override = SubResource("PhysicsMaterial_pxise")
-metadata/_edit_lock_ = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Obstacles/Floor" unique_id=451280475]
 mesh = SubResource("PlaneMesh_5jmwy")
@@ -68,7 +68,7 @@ shape = SubResource("BoxShape3D_rj7wp")
 disabled = true
 
 [node name="Wall1" type="StaticBody3D" parent="Obstacles" unique_id=428990611]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.002, 0.001, -3)
+transform = Transform3D(2.5, 0, 0, 0, 1, 0, 0, 0, 1, 0.002, 0.001, -3)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Obstacles/Wall1" unique_id=1600418442]
 mesh = SubResource("BoxMesh_e23d5")
@@ -77,7 +77,7 @@ mesh = SubResource("BoxMesh_e23d5")
 shape = SubResource("ConvexPolygonShape3D_4osb2")
 
 [node name="Wall2" type="StaticBody3D" parent="Obstacles" unique_id=766869423]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 3, 0.001, 0)
+transform = Transform3D(-6.55671e-08, 0, 1, 0, 1, 0, -1.5, 0, -4.37114e-08, 5.1195703, 0.001, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Obstacles/Wall2" unique_id=482982261]
 mesh = SubResource("BoxMesh_msus4")
@@ -86,7 +86,7 @@ mesh = SubResource("BoxMesh_msus4")
 shape = SubResource("ConvexPolygonShape3D_4osb2")
 
 [node name="Wall3" type="StaticBody3D" parent="Obstacles" unique_id=1085108635]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.002, 0.001, 3)
+transform = Transform3D(2.5, 0, 0, 0, 1, 0, 0, 0, 1, 0.002, 0.001, 3)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Obstacles/Wall3" unique_id=163231059]
 mesh = SubResource("BoxMesh_e23d5")
@@ -95,7 +95,7 @@ mesh = SubResource("BoxMesh_e23d5")
 shape = SubResource("ConvexPolygonShape3D_4osb2")
 
 [node name="Wall4" type="StaticBody3D" parent="Obstacles" unique_id=866775348]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -3, 0.001, 0)
+transform = Transform3D(-6.55671e-08, 0, 1, 0, 1, 0, -1.5, 0, -4.37114e-08, -5, 0.001, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Obstacles/Wall4" unique_id=884640629]
 mesh = SubResource("BoxMesh_msus4")
@@ -107,8 +107,8 @@ shape = SubResource("ConvexPolygonShape3D_4osb2")
 transform = Transform3D(0.999586, -0.0138976, 0.0251778, -0.00220186, 0.835929, 0.548833, -0.0286743, -0.548661, 0.835553, -0.00823641, 1.35612, 2.39591)
 fov = 100.0
 
-[node name="Robot" parent="." unique_id=383886742 instance=ExtResource("1_d2j6q")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.214639, 0)
+[node name="SwarmManager" type="Node3D" parent="." unique_id=383886742]
+script = ExtResource("4_5qh0j")
 
 [node name="Label_X" type="Label" parent="." unique_id=1034283150]
 offset_right = 40.0

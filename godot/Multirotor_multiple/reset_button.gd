@@ -1,9 +1,12 @@
 extends Button
 
-@onready var drone: RigidBody3D = $"/root/World/Robot/drone"
+@onready var swarm_manager: SwarmManager = $"/root/World/SwarmManager" as SwarmManager
 
+# Connects this button to the swarm reset action.
 func _ready() -> void:
 	pressed.connect(on_pressed)
-	
-func on_pressed():
-	drone.do_reset()
+
+# Resets all active drones through the swarm manager.
+func on_pressed() -> void:
+	if swarm_manager != null:
+		swarm_manager.reset_all()
