@@ -5,6 +5,8 @@ extends Node3D
 
 const FORCE_TOPICS: Array[String] = ["f1", "f2", "f3", "f4"]
 
+var is_active: bool = true
+
 @onready var drone = _find_drone()
 
 # Prepares this drone's namespaced DDS subscriptions.
@@ -25,6 +27,10 @@ func _ready() -> void:
 
 # Updates DDS state output and applies the latest motor commands.
 func _process(_delta: float) -> void:
+	if not is_active:
+		DDS.publish(topic("active"), DDS.DDS_TYPE_INT, 0)
+		return
+
 	DDS.publish(topic("active"), DDS.DDS_TYPE_INT, 1)
 	_publish_state()
 	_apply_motor_forces()
@@ -32,6 +38,15 @@ func _process(_delta: float) -> void:
 # Builds this drone's namespaced DDS topic name.
 func topic(topic_name: String) -> String:
 	return "D%d_%s" % [drone_id, topic_name]
+
+# Returns the displayed X/Y/Z position using the DDS axis convention.
+func get_display_position() -> Vector3:
+	if drone == null:
+		return Vector3.ZERO
+
+	var pose: Array = drone.get_pose()
+	var pos_state: Vector3 = pose[0]
+	return Vector3(pos_state.z, pos_state.x, pos_state.y)
 
 # Resets the physical drone and clears its motor commands.
 func do_reset() -> void:
@@ -43,6 +58,7 @@ func do_reset() -> void:
 
 # Marks this drone inactive on DDS and clears its motor commands.
 func deactivate() -> void:
+	is_active = false
 	DDS.publish(topic("active"), DDS.DDS_TYPE_INT, 0)
 	_clear_motor_forces()
 
@@ -104,3 +120,6 @@ func _apply_motor_forces() -> void:
 func _clear_motor_forces() -> void:
 	for force_topic: String in FORCE_TOPICS:
 		DDS.clear(topic(force_topic))
+
+	if drone != null:
+		drone.set_forces(0.0, 0.0, 0.0, 0.0)

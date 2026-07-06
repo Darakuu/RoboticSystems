@@ -3,6 +3,10 @@
 [ext_resource type="Script" uid="uid://blfon3x6pf5fc" path="res://reset_button.gd" id="2_j0add"]
 [ext_resource type="Script" uid="uid://b8r4t0mvm887h" path="res://start_button.gd" id="3_6ytcn"]
 [ext_resource type="Script" uid="uid://bcfn84du3abvd" path="res://swarmManager.gd" id="4_5qh0j"]
+[ext_resource type="Script" uid="uid://tb6gimxa3ne3" path="res://add_drone_button.gd" id="5_0jgjx"]
+[ext_resource type="Script" uid="uid://bj20iht3lp32c" path="res://remove_drone_button.gd" id="6_n8bas"]
+[ext_resource type="Script" uid="uid://drvg37iomwrj" path="res://formation_selector.gd" id="7_f2qj8"]
+[ext_resource type="Script" uid="uid://c3x65oqyjdr3j" path="res://camera_toggle_button.gd" id="8_g01u2"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ykxtl"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -110,63 +114,66 @@ fov = 100.0
 [node name="SwarmManager" type="Node3D" parent="." unique_id=383886742]
 script = ExtResource("4_5qh0j")
 
-[node name="Label_X" type="Label" parent="." unique_id=1034283150]
-offset_right = 40.0
-offset_bottom = 23.0
-theme_override_font_sizes/font_size = 20
-text = "X "
-
-[node name="Label_Y" type="Label" parent="." unique_id=741222148]
-offset_top = 34.0
-offset_right = 40.0
-offset_bottom = 62.0
-theme_override_font_sizes/font_size = 20
-text = "Y"
-
-[node name="Label_Z" type="Label" parent="." unique_id=632009485]
-offset_top = 69.0
-offset_right = 40.0
-offset_bottom = 97.0
-theme_override_font_sizes/font_size = 20
-text = "Z"
-
-[node name="Label_XR" type="Label" parent="." unique_id=270333501]
-offset_left = 161.0
-offset_right = 201.0
-offset_bottom = 28.0
-theme_override_font_sizes/font_size = 20
-text = "X "
-
-[node name="Label_YR" type="Label" parent="." unique_id=222157570]
-offset_left = 161.0
-offset_top = 34.0
-offset_right = 201.0
-offset_bottom = 62.0
-theme_override_font_sizes/font_size = 20
-text = "Y"
-
-[node name="Label_ZR" type="Label" parent="." unique_id=1697099701]
-offset_left = 161.0
-offset_top = 69.0
-offset_right = 201.0
-offset_bottom = 97.0
-theme_override_font_sizes/font_size = 20
-text = "Z"
+[node name="TelemetryPanel" type="VBoxContainer" parent="." unique_id=1541085343]
+custom_minimum_size = Vector2(260, 170)
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 268.0
+offset_bottom = 178.0
+theme_override_constants/separation = 4
 
 [node name="ResetButton" type="Button" parent="." unique_id=86104374]
 custom_minimum_size = Vector2(100, 50)
-offset_left = 3.0
-offset_top = 114.0
-offset_right = 103.0
-offset_bottom = 164.0
+offset_left = 8.0
+offset_top = 241.0
+offset_right = 108.0
+offset_bottom = 291.0
 text = "Reset"
 script = ExtResource("2_j0add")
 
 [node name="StartButton" type="Button" parent="." unique_id=998112817]
 custom_minimum_size = Vector2(100, 60)
-offset_left = 5.0
-offset_top = 181.0
-offset_right = 105.0
-offset_bottom = 241.0
+offset_left = 10.0
+offset_top = 308.0
+offset_right = 110.0
+offset_bottom = 368.0
 text = "Start"
 script = ExtResource("3_6ytcn")
+
+[node name="AddDroneButton" type="Button" parent="." unique_id=1017055722]
+custom_minimum_size = Vector2(130, 50)
+offset_left = 10.0
+offset_top = 385.0
+offset_right = 140.0
+offset_bottom = 435.0
+text = "Add Drone"
+script = ExtResource("5_0jgjx")
+
+[node name="RemoveDroneButton" type="Button" parent="." unique_id=996260538]
+custom_minimum_size = Vector2(130, 50)
+offset_left = 10.0
+offset_top = 445.0
+offset_right = 140.0
+offset_bottom = 495.0
+text = "Remove Drone"
+script = ExtResource("6_n8bas")
+
+[node name="FormationSelector" type="OptionButton" parent="." unique_id=941003337]
+custom_minimum_size = Vector2(130, 40)
+offset_left = 10.0
+offset_top = 513.0
+offset_right = 140.0
+offset_bottom = 553.0
+script = ExtResource("7_f2qj8")
+
+[node name="CameraToggleButton" type="Button" parent="." unique_id=348431257]
+custom_minimum_size = Vector2(140, 50)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 20.0
+offset_right = -10.0
+offset_bottom = 70.0
+text = "Top View"
+script = ExtResource("8_g01u2")

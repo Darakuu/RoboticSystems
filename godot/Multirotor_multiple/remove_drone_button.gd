@@ -4,13 +4,13 @@ extends Button
 
 @onready var swarm_manager: SwarmManager = get_node_or_null(swarm_manager_path) as SwarmManager
 
-# Connects this button to the swarm reset action.
+# Connects this button to the runtime drone removal action.
 func _ready() -> void:
 	pressed.connect(on_pressed)
 	if swarm_manager == null:
-		push_warning("ResetButton could not find the SwarmManager.")
+		push_warning("RemoveDroneButton could not find the SwarmManager.")
 
-# Resets all active drones through the swarm manager.
+# Removes the latest drone through the swarm manager.
 func on_pressed() -> void:
 	if swarm_manager != null:
-		swarm_manager.reset_all()
+		swarm_manager.remove_latest_drone()
