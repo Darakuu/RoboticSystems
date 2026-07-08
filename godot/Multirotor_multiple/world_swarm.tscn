@@ -3,10 +3,13 @@
 [ext_resource type="Script" uid="uid://blfon3x6pf5fc" path="res://reset_button.gd" id="2_j0add"]
 [ext_resource type="Script" uid="uid://b8r4t0mvm887h" path="res://start_button.gd" id="3_6ytcn"]
 [ext_resource type="Script" uid="uid://bcfn84du3abvd" path="res://swarmManager.gd" id="4_5qh0j"]
-[ext_resource type="Script" uid="uid://tb6gimxa3ne3" path="res://add_drone_button.gd" id="5_0jgjx"]
-[ext_resource type="Script" uid="uid://bj20iht3lp32c" path="res://remove_drone_button.gd" id="6_n8bas"]
-[ext_resource type="Script" uid="uid://drvg37iomwrj" path="res://formation_selector.gd" id="7_f2qj8"]
-[ext_resource type="Script" uid="uid://c3x65oqyjdr3j" path="res://camera_toggle_button.gd" id="8_g01u2"]
+[ext_resource type="Script" path="res://add_drone_button.gd" id="5_0jgjx"]
+[ext_resource type="Script" path="res://remove_drone_button.gd" id="6_n8bas"]
+[ext_resource type="Script" path="res://formation_selector.gd" id="7_f2qj8"]
+[ext_resource type="Script" path="res://camera_toggle_button.gd" id="8_g01u2"]
+[ext_resource type="Script" path="res://boids_debug_overlay.gd" id="9_t1xk4"]
+[ext_resource type="Script" path="res://boids_debug_toggle_button.gd" id="10_kd3wf"]
+[ext_resource type="Script" path="res://collision_bounds_toggle_button.gd" id="11_b7s46"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ykxtl"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -57,7 +60,7 @@ shadow_enabled = true
 metadata/_edit_lock_ = true
 
 [node name="Floor" type="StaticBody3D" parent="Obstacles" unique_id=1686858667]
-transform = Transform3D(1.7, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(1.7, 0, 0, 0, 1, 0, 0, 0, 1.7, 0, 0, 0)
 physics_material_override = SubResource("PhysicsMaterial_pxise")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Obstacles/Floor" unique_id=451280475]
@@ -72,7 +75,7 @@ shape = SubResource("BoxShape3D_rj7wp")
 disabled = true
 
 [node name="Wall1" type="StaticBody3D" parent="Obstacles" unique_id=428990611]
-transform = Transform3D(2.5, 0, 0, 0, 1, 0, 0, 0, 1, 0.002, 0.001, -3)
+transform = Transform3D(2.5, 0, 0, 0, 1, 0, 0, 0, 1, 0.002, 0.001, -5)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Obstacles/Wall1" unique_id=1600418442]
 mesh = SubResource("BoxMesh_e23d5")
@@ -81,7 +84,7 @@ mesh = SubResource("BoxMesh_e23d5")
 shape = SubResource("ConvexPolygonShape3D_4osb2")
 
 [node name="Wall2" type="StaticBody3D" parent="Obstacles" unique_id=766869423]
-transform = Transform3D(-6.55671e-08, 0, 1, 0, 1, 0, -1.5, 0, -4.37114e-08, 5.1195703, 0.001, 0)
+transform = Transform3D(-6.55671e-08, 0, 1, 0, 1, 0, -2.5, 0, -4.37114e-08, 5.1195703, 0.001, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Obstacles/Wall2" unique_id=482982261]
 mesh = SubResource("BoxMesh_msus4")
@@ -90,7 +93,7 @@ mesh = SubResource("BoxMesh_msus4")
 shape = SubResource("ConvexPolygonShape3D_4osb2")
 
 [node name="Wall3" type="StaticBody3D" parent="Obstacles" unique_id=1085108635]
-transform = Transform3D(2.5, 0, 0, 0, 1, 0, 0, 0, 1, 0.002, 0.001, 3)
+transform = Transform3D(2.5, 0, 0, 0, 1, 0, 0, 0, 1, 0.002, 0.001, 5)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Obstacles/Wall3" unique_id=163231059]
 mesh = SubResource("BoxMesh_e23d5")
@@ -99,7 +102,7 @@ mesh = SubResource("BoxMesh_e23d5")
 shape = SubResource("ConvexPolygonShape3D_4osb2")
 
 [node name="Wall4" type="StaticBody3D" parent="Obstacles" unique_id=866775348]
-transform = Transform3D(-6.55671e-08, 0, 1, 0, 1, 0, -1.5, 0, -4.37114e-08, -5, 0.001, 0)
+transform = Transform3D(-6.55671e-08, 0, 1, 0, 1, 0, -2.5, 0, -4.37114e-08, -5, 0.001, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Obstacles/Wall4" unique_id=884640629]
 mesh = SubResource("BoxMesh_msus4")
@@ -113,6 +116,9 @@ fov = 100.0
 
 [node name="SwarmManager" type="Node3D" parent="." unique_id=383886742]
 script = ExtResource("4_5qh0j")
+
+[node name="BoidsDebugOverlay" type="Node3D" parent="."]
+script = ExtResource("9_t1xk4")
 
 [node name="TelemetryPanel" type="VBoxContainer" parent="." unique_id=1541085343]
 custom_minimum_size = Vector2(260, 170)
@@ -177,3 +183,27 @@ offset_right = -10.0
 offset_bottom = 70.0
 text = "Top View"
 script = ExtResource("8_g01u2")
+
+[node name="BoidsDebugButton" type="Button" parent="."]
+custom_minimum_size = Vector2(140, 50)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 80.0
+offset_right = -10.0
+offset_bottom = 130.0
+text = "Show Debug"
+script = ExtResource("10_kd3wf")
+
+[node name="CollisionBoundsButton" type="Button" parent="."]
+custom_minimum_size = Vector2(140, 50)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 140.0
+offset_right = -10.0
+offset_bottom = 190.0
+text = "Hide Bounds"
+script = ExtResource("11_b7s46")

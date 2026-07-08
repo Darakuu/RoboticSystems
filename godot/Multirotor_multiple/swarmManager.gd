@@ -1,16 +1,6 @@
 class_name SwarmManager
 extends Node3D
 
-@export var current_drones: int = 4
-@export var max_drones: int = 6
-@export var spawn_spacing: float = 1.0
-@export var spawn_height: float = 0.214639
-@export var robot_scene: PackedScene = preload("res://swarmRobot.tscn")
-@export var formation_id: int = Formation.NONE
-@export var telemetry_panel_path: NodePath = ^"../TelemetryPanel"
-
-const MANAGER_PROCESS_PRIORITY: int = 100
-
 enum Formation {
 	NONE = 0,
 	LINE = 1,
@@ -19,7 +9,20 @@ enum Formation {
 	CIRCLE = 4,
 }
 
-var active_drones: Array[SwarmRobot] = []
+@export var current_drones: int = 4
+@export var max_drones: int = 6
+@export var min_drones: int = 1
+@export var spawn_spacing: float = 1.4
+@export var spawn_height: float = 0.214639
+@export var robot_scene: PackedScene = preload("res://swarmRobot.tscn")
+@export var formation_id: int = Formation.LINE
+@export var telemetry_panel_path: NodePath = ^"../TelemetryPanel"
+
+const MANAGER_PROCESS_PRIORITY: int = 100
+const CURRENT_DRONES_TOPIC: String = "current_drones"
+const LEGACY_DRONE_COUNT_TOPIC: String = "drone_count"
+
+var active_drones: Array[Node3D] = []
 var drone_count: int = 0
 var telemetry_labels: Dictionary = {}
 
@@ -30,8 +33,9 @@ func _ready() -> void:
 	# Publish tick after child drones have published their per-drone state.
 	process_priority = MANAGER_PROCESS_PRIORITY
 
-	max_drones = max(max_drones, 0)
-	current_drones = clamp(current_drones, 0, max_drones)
+	max_drones = max(max_drones, 1)
+	min_drones = clamp(min_drones, 1, max_drones)
+	current_drones = clamp(current_drones, min_drones, max_drones)
 	formation_id = _clamp_formation_id(formation_id)
 
 	for drone_index: int in range(current_drones):
@@ -51,7 +55,7 @@ func _process(delta: float) -> void:
 	_update_telemetry_widgets()
 
 # Instantiates one SwarmRobot with the next contiguous drone id.
-func add_drone(spawn_position: Vector3 = Vector3.ZERO) -> SwarmRobot:
+func add_drone(spawn_position: Vector3 = Vector3.ZERO) -> Node3D:
 	if active_drones.size() >= max_drones:
 		push_warning("SwarmManager cannot add more than %d drones." % max_drones)
 		return null
@@ -61,13 +65,17 @@ func add_drone(spawn_position: Vector3 = Vector3.ZERO) -> SwarmRobot:
 		return null
 
 	var next_drone_id: int = active_drones.size()
-	var swarm_robot: SwarmRobot = robot_scene.instantiate() as SwarmRobot
+	var swarm_robot: Node3D = robot_scene.instantiate() as Node3D
 	if swarm_robot == null:
-		push_error("robot_scene must point to a scene with a SwarmRobot root.")
+		push_error("robot_scene must point to a Node3D root.")
+		return null
+
+	if not swarm_robot.has_method("deactivate") or not swarm_robot.has_method("do_reset") or not swarm_robot.has_method("get_display_position"):
+		push_error("robot_scene root must expose the SwarmRobot API.")
 		return null
 
 	swarm_robot.name = "D%d" % next_drone_id
-	swarm_robot.drone_id = next_drone_id
+	swarm_robot.set("drone_id", next_drone_id)
 	swarm_robot.position = spawn_position
 	add_child(swarm_robot)
 
@@ -79,18 +87,19 @@ func add_drone(spawn_position: Vector3 = Vector3.ZERO) -> SwarmRobot:
 	return swarm_robot
 
 # Adds one drone in the next stable id slot.
-func add_next_drone() -> SwarmRobot:
+func add_next_drone() -> Node3D:
 	return add_drone(_spawn_position_for(active_drones.size()))
 
 # Removes the most recently added drone and marks it inactive on DDS.
 func remove_latest_drone() -> void:
-	if active_drones.is_empty():
+	if active_drones.size() <= min_drones:
+		push_warning("SwarmManager cannot keep fewer than %d drone(s)." % min_drones)
 		_refresh_drone_count()
 		return
 
-	var swarm_robot: SwarmRobot = active_drones.pop_back() as SwarmRobot
+	var swarm_robot: Node3D = active_drones.pop_back() as Node3D
 	if is_instance_valid(swarm_robot):
-		swarm_robot.deactivate()
+		swarm_robot.call("deactivate")
 		if swarm_robot.get_parent() == self:
 			remove_child(swarm_robot)
 		swarm_robot.queue_free()
@@ -104,8 +113,8 @@ func set_formation_id(next_formation_id: int) -> void:
 
 # Resets every active drone without changing swarm membership.
 func reset_all() -> void:
-	for swarm_robot: SwarmRobot in active_drones:
-		swarm_robot.do_reset()
+	for swarm_robot: Node3D in active_drones:
+		swarm_robot.call("do_reset")
 	_publish_drone_count()
 
 # Computes a deterministic world slot for a drone id.
@@ -127,14 +136,15 @@ func _sync_telemetry_widgets() -> void:
 		return
 
 	var active_ids: Dictionary = {}
-	for swarm_robot: SwarmRobot in active_drones:
-		active_ids[swarm_robot.drone_id] = true
-		if not telemetry_labels.has(swarm_robot.drone_id):
+	for swarm_robot: Node3D in active_drones:
+		var drone_id_value: int = _drone_id_for(swarm_robot)
+		active_ids[drone_id_value] = true
+		if not telemetry_labels.has(drone_id_value):
 			var label := Label.new()
-			label.name = "D%dTelemetry" % swarm_robot.drone_id
+			label.name = "D%dTelemetry" % drone_id_value
 			label.add_theme_font_size_override("font_size", 14)
 			telemetry_panel.add_child(label)
-			telemetry_labels[swarm_robot.drone_id] = label
+			telemetry_labels[drone_id_value] = label
 
 	for drone_id in telemetry_labels.keys():
 		if not active_ids.has(drone_id):
@@ -148,26 +158,41 @@ func _update_telemetry_widgets() -> void:
 	if telemetry_panel == null:
 		return
 
-	for swarm_robot: SwarmRobot in active_drones:
-		var label: Label = telemetry_labels.get(swarm_robot.drone_id) as Label
+	for swarm_robot: Node3D in active_drones:
+		var drone_id_value: int = _drone_id_for(swarm_robot)
+		var label: Label = telemetry_labels.get(drone_id_value) as Label
 		if label == null:
 			continue
 
-		var display_position: Vector3 = swarm_robot.get_display_position()
+		var display_position: Vector3 = _display_position_for(swarm_robot)
 		label.text = "D%d | X %.2f  Y %.2f  Z %.2f" % [
-			swarm_robot.drone_id,
+			drone_id_value,
 			display_position.x,
 			display_position.y,
 			display_position.z,
 		]
 
+# Reads the dynamic drone id from a SwarmRobot-compatible node.
+func _drone_id_for(swarm_robot: Node) -> int:
+	return int(swarm_robot.get("drone_id"))
+
+# Reads the display position from a SwarmRobot-compatible node.
+func _display_position_for(swarm_robot: Node) -> Vector3:
+	var display_position = swarm_robot.call("get_display_position")
+	if display_position is Vector3:
+		return display_position
+	return Vector3.ZERO
+
 # Clamps the formation enum to the supported DDS contract range.
 func _clamp_formation_id(value: int) -> int:
 	return clamp(value, Formation.NONE, Formation.CIRCLE)
 
-# Publishes the manager-owned drone count through DDS.
+# Publishes the current active drone count through DDS.
 func _publish_drone_count() -> void:
-	DDS.publish("drone_count", DDS.DDS_TYPE_INT, drone_count)
+	drone_count = active_drones.size()
+	current_drones = drone_count
+	DDS.publish(CURRENT_DRONES_TOPIC, DDS.DDS_TYPE_INT, current_drones)
+	DDS.publish(LEGACY_DRONE_COUNT_TOPIC, DDS.DDS_TYPE_INT, current_drones)
 
 # Publishes the selected formation enum through DDS.
 func _publish_formation_id() -> void:
