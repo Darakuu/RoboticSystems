@@ -18,6 +18,7 @@ const BOIDS_MODE_PREDICTIVE: int = 2
 
 var debug_visible: bool = false
 var collision_bounds_visible: bool = true
+var debug_text_visible: bool = true
 var debug_rows: Dictionary = {}
 var target_material: StandardMaterial3D
 var separation_material: StandardMaterial3D
@@ -51,12 +52,11 @@ func set_debug_visible(enabled: bool) -> void:
 	debug_visible = enabled
 	visible = enabled
 	for row in debug_rows.values():
-		var label: Label3D = row["label"] as Label3D
 		var target_mesh: MeshInstance3D = row["target_mesh"] as MeshInstance3D
 		var boids_mesh: MeshInstance3D = row["boids_mesh"] as MeshInstance3D
-		label.visible = enabled
 		target_mesh.visible = enabled
 		boids_mesh.visible = enabled
+	_set_debug_labels_visible(false)
 	_set_collision_bounds_visible(enabled and collision_bounds_visible)
 
 # Flips the current debug visibility state.
@@ -73,6 +73,17 @@ func set_collision_bounds_visible(enabled: bool) -> void:
 func toggle_collision_bounds_visible() -> bool:
 	set_collision_bounds_visible(not collision_bounds_visible)
 	return collision_bounds_visible
+
+# Shows or hides only the floating debug text labels.
+func set_debug_text_visible(enabled: bool) -> void:
+	debug_text_visible = enabled
+	if not debug_text_visible:
+		_set_debug_labels_visible(false)
+
+# Flips only the floating debug text labels.
+func toggle_debug_text_visible() -> bool:
+	set_debug_text_visible(not debug_text_visible)
+	return debug_text_visible
 
 # Registers every notebook-published Boids debug topic.
 func _subscribe_debug_topics() -> void:
@@ -139,7 +150,7 @@ func _update_drone_debug(drone_id: int) -> void:
 	_draw_arrow(target_mesh, current_position, adjusted_target)
 	_draw_arrow(boids_mesh, base_target, adjusted_target)
 
-	label.visible = true
+	label.visible = debug_text_visible
 	label.global_position = current_position + Vector3(0.0, label_height, 0.0)
 	label.text = "D%d\nmode %s (%d)\nboids %.2f\nsafe %.2f\nneighbors %d\ntarget %.2f" % [
 		drone_id,
@@ -262,6 +273,13 @@ func _set_collision_bounds_visible(enabled: bool) -> void:
 		var collision_mesh: MeshInstance3D = mesh_instance as MeshInstance3D
 		if collision_mesh != null:
 			collision_mesh.visible = enabled
+
+# Shows or hides all per-drone text labels.
+func _set_debug_labels_visible(enabled: bool) -> void:
+	for row in debug_rows.values():
+		var label: Label3D = row["label"] as Label3D
+		if label != null:
+			label.visible = enabled
 
 # Computes a world-space AABB around a drone's collision shapes.
 func _collision_bounds_for(swarm_robot: Node) -> Dictionary:

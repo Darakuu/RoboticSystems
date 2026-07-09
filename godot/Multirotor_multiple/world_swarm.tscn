@@ -10,6 +10,8 @@
 [ext_resource type="Script" path="res://boids_debug_overlay.gd" id="9_t1xk4"]
 [ext_resource type="Script" path="res://boids_debug_toggle_button.gd" id="10_kd3wf"]
 [ext_resource type="Script" path="res://collision_bounds_toggle_button.gd" id="11_b7s46"]
+[ext_resource type="Script" path="res://boids_debug_text_toggle_button.gd" id="12_pjpbq"]
+[ext_resource type="Script" path="res://target_point.gd" id="13_ap2hc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ykxtl"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -120,6 +122,10 @@ script = ExtResource("4_5qh0j")
 [node name="BoidsDebugOverlay" type="Node3D" parent="."]
 script = ExtResource("9_t1xk4")
 
+[node name="TargetPoint" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("13_ap2hc")
+
 [node name="TelemetryPanel" type="VBoxContainer" parent="." unique_id=1541085343]
 custom_minimum_size = Vector2(260, 170)
 offset_left = 8.0
@@ -207,3 +213,15 @@ offset_right = -10.0
 offset_bottom = 190.0
 text = "Hide Bounds"
 script = ExtResource("11_b7s46")
+
+[node name="DebugTextButton" type="Button" parent="."]
+custom_minimum_size = Vector2(140, 50)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 200.0
+offset_right = -10.0
+offset_bottom = 250.0
+text = "Hide Text"
+script = ExtResource("12_pjpbq")
