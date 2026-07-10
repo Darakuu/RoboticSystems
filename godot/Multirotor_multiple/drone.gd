@@ -1,71 +1,63 @@
+class_name MultirotorBody
 extends RigidBody3D
 
-@onready var L = 0.195
-@onready var p1 = Vector3(L,0,L)
-@onready var p2 = Vector3(-L,0,L)
-@onready var p3 = Vector3(-L,0,-L)
-@onready var p4 = Vector3(L,0,-L)
-var f1 = Vector3(0,0,0)
-var f2 = Vector3(0,0,0)
-var f3 = Vector3(0,0,0)
-var f4 = Vector3(0,0,0)
+const ARM_LENGTH: float = 0.195
+const MOTOR_POSITIONS: Array[Vector3] = [
+	Vector3(ARM_LENGTH, 0.0, ARM_LENGTH),
+	Vector3(-ARM_LENGTH, 0.0, ARM_LENGTH),
+	Vector3(-ARM_LENGTH, 0.0, -ARM_LENGTH),
+	Vector3(ARM_LENGTH, 0.0, -ARM_LENGTH),
+]
 
-var initial_position
-var initial_rotation
-var initial_velocity
-var initial_angular_velocity
-var perform_reset : bool = false
+var motor_forces: Array[float] = [0.0, 0.0, 0.0, 0.0]
+var initial_transform: Transform3D
+var initial_linear_velocity: Vector3
+var initial_angular_velocity: Vector3
+var reset_requested: bool = false
 
-func _ready():
-	initial_position = position
-	initial_rotation = rotation
-	initial_velocity = linear_velocity
+
+func _ready() -> void:
+	initial_transform = transform
+	initial_linear_velocity = linear_velocity
 	initial_angular_velocity = angular_velocity
 
-# Requests a reset on the next physics tick.
-func do_reset():
-	perform_reset = true
 
-# Restores the drone to its initial local transform and velocity.
-func reset():
-	position = initial_position
-	rotation = initial_rotation
-	linear_velocity = initial_velocity 
-	angular_velocity = initial_angular_velocity
+func _physics_process(_delta: float) -> void:
+	if reset_requested:
+		_reset_state()
+		return
 
-# Applies the current motor forces during the physics step.
-func _physics_process(_delta):
-	if perform_reset:
-		reset()
-		perform_reset = false
-		DDS.clear("f1")
-		DDS.clear("f2")
-		DDS.clear("f3")
-		DDS.clear("f4")
-	else:
-		apply_local_force(f1, p1)
-		apply_local_force(f2, p2)
-		apply_local_force(f3, p3)
-		apply_local_force(f4, p4)
+	for motor_id: int in range(MOTOR_POSITIONS.size()):
+		_apply_motor_force(motor_forces[motor_id], MOTOR_POSITIONS[motor_id])
 
-# Converts a motor force from drone-local coordinates to world physics coordinates.
-func apply_local_force(force: Vector3, pos: Vector3):
-	var body_basis = global_transform.basis
-	var pos_global = body_basis * pos
-	var force_global = body_basis * force
-	apply_force(force_global, pos_global)
 
-# Stores the latest scalar force for each motor.
-func set_forces(_f1,_f2,_f3,_f4):
-	f1 = Vector3(0,_f1,0)
-	f2 = Vector3(0,_f2,0)
-	f3 = Vector3(0,_f3,0)
-	f4 = Vector3(0,_f4,0)
+func do_reset() -> void:
+	reset_requested = true
 
-# Returns global position and Euler rotation for DDS publishing.
-func get_pose():
+
+func set_forces(f1: float, f2: float, f3: float, f4: float) -> void:
+	motor_forces[0] = f1
+	motor_forces[1] = f2
+	motor_forces[2] = f3
+	motor_forces[3] = f4
+
+
+func get_pose() -> Array[Vector3]:
 	return [global_position, global_rotation]
 
-# Returns linear and angular velocity for DDS publishing.
-func get_velocity():
+
+func get_velocity() -> Array[Vector3]:
 	return [linear_velocity, angular_velocity]
+
+
+func _apply_motor_force(force: float, motor_position: Vector3) -> void:
+	var basis: Basis = global_transform.basis
+	apply_force(basis * Vector3.UP * force, basis * motor_position)
+
+
+func _reset_state() -> void:
+	transform = initial_transform
+	linear_velocity = initial_linear_velocity
+	angular_velocity = initial_angular_velocity
+	set_forces(0.0, 0.0, 0.0, 0.0)
+	reset_requested = false

@@ -1,16 +1,7 @@
 extends Button
 
-@export var swarm_manager_path: NodePath = ^"../SwarmManager"
+@onready var swarm_manager: SwarmManager = $"../SwarmManager"
 
-@onready var swarm_manager: SwarmManager = get_node_or_null(swarm_manager_path) as SwarmManager
 
-# Connects this button to the swarm reset action.
 func _ready() -> void:
-	pressed.connect(on_pressed)
-	if swarm_manager == null:
-		push_warning("ResetButton could not find the SwarmManager.")
-
-# Resets all active drones through the swarm manager.
-func on_pressed() -> void:
-	if swarm_manager != null:
-		swarm_manager.reset_all()
+	pressed.connect(swarm_manager.reset_all)

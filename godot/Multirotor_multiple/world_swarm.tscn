@@ -3,15 +3,13 @@
 [ext_resource type="Script" uid="uid://blfon3x6pf5fc" path="res://reset_button.gd" id="2_j0add"]
 [ext_resource type="Script" uid="uid://b8r4t0mvm887h" path="res://start_button.gd" id="3_6ytcn"]
 [ext_resource type="Script" uid="uid://bcfn84du3abvd" path="res://swarmManager.gd" id="4_5qh0j"]
-[ext_resource type="Script" path="res://add_drone_button.gd" id="5_0jgjx"]
-[ext_resource type="Script" path="res://remove_drone_button.gd" id="6_n8bas"]
-[ext_resource type="Script" path="res://formation_selector.gd" id="7_f2qj8"]
-[ext_resource type="Script" path="res://camera_toggle_button.gd" id="8_g01u2"]
-[ext_resource type="Script" path="res://boids_debug_overlay.gd" id="9_t1xk4"]
-[ext_resource type="Script" path="res://boids_debug_toggle_button.gd" id="10_kd3wf"]
-[ext_resource type="Script" path="res://collision_bounds_toggle_button.gd" id="11_b7s46"]
-[ext_resource type="Script" path="res://boids_debug_text_toggle_button.gd" id="12_pjpbq"]
-[ext_resource type="Script" path="res://target_point.gd" id="13_ap2hc"]
+[ext_resource type="Script" uid="uid://tb6gimxa3ne3" path="res://add_drone_button.gd" id="5_0jgjx"]
+[ext_resource type="Script" uid="uid://bj20iht3lp32c" path="res://remove_drone_button.gd" id="6_n8bas"]
+[ext_resource type="Script" uid="uid://drvg37iomwrj" path="res://formation_selector.gd" id="7_f2qj8"]
+[ext_resource type="Script" uid="uid://c3x65oqyjdr3j" path="res://camera_toggle_button.gd" id="8_g01u2"]
+[ext_resource type="Script" uid="uid://cusanglbx34j" path="res://boids_debug_overlay.gd" id="9_t1xk4"]
+[ext_resource type="Script" uid="uid://b8sosjy7bdq38" path="res://debug_toggle_button.gd" id="10_kd3wf"]
+[ext_resource type="Script" uid="uid://cpf3ctppnlu0l" path="res://target_point.gd" id="13_ap2hc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ykxtl"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -119,10 +117,10 @@ fov = 100.0
 [node name="SwarmManager" type="Node3D" parent="." unique_id=383886742]
 script = ExtResource("4_5qh0j")
 
-[node name="BoidsDebugOverlay" type="Node3D" parent="."]
+[node name="BoidsDebugOverlay" type="Node3D" parent="." unique_id=480079617]
 script = ExtResource("9_t1xk4")
 
-[node name="TargetPoint" type="Area3D" parent="."]
+[node name="TargetPoint" type="Area3D" parent="." unique_id=280024217]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("13_ap2hc")
 
@@ -190,7 +188,7 @@ offset_bottom = 70.0
 text = "Top View"
 script = ExtResource("8_g01u2")
 
-[node name="BoidsDebugButton" type="Button" parent="."]
+[node name="BoidsDebugButton" type="Button" parent="." unique_id=987127883]
 custom_minimum_size = Vector2(140, 50)
 anchors_preset = 1
 anchor_left = 1.0
@@ -202,7 +200,7 @@ offset_bottom = 130.0
 text = "Show Debug"
 script = ExtResource("10_kd3wf")
 
-[node name="CollisionBoundsButton" type="Button" parent="."]
+[node name="CollisionBoundsButton" type="Button" parent="." unique_id=199157230]
 custom_minimum_size = Vector2(140, 50)
 anchors_preset = 1
 anchor_left = 1.0
@@ -212,9 +210,10 @@ offset_top = 140.0
 offset_right = -10.0
 offset_bottom = 190.0
 text = "Hide Bounds"
-script = ExtResource("11_b7s46")
+script = ExtResource("10_kd3wf")
+mode = 1
 
-[node name="DebugTextButton" type="Button" parent="."]
+[node name="DebugTextButton" type="Button" parent="." unique_id=751087627]
 custom_minimum_size = Vector2(140, 50)
 anchors_preset = 1
 anchor_left = 1.0
@@ -224,4 +223,5 @@ offset_top = 200.0
 offset_right = -10.0
 offset_bottom = 250.0
 text = "Hide Text"
-script = ExtResource("12_pjpbq")
+script = ExtResource("10_kd3wf")
+mode = 2
