@@ -111,8 +111,7 @@ mesh = SubResource("BoxMesh_msus4")
 shape = SubResource("ConvexPolygonShape3D_4osb2")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1303203247]
-transform = Transform3D(0.999586, -0.0138976, 0.0251778, -0.00220186, 0.835929, 0.548833, -0.0286743, -0.548661, 0.835553, -0.00823641, 1.35612, 2.39591)
-fov = 100.0
+transform = Transform3D(0.9999996, 0, 0, 0, 0.90630746, 0.42261833, 0, -0.42261815, 0.9063079, 0, 3, 6)
 
 [node name="SwarmManager" type="Node3D" parent="." unique_id=383886742]
 script = ExtResource("4_5qh0j")

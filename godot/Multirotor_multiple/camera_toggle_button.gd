@@ -1,6 +1,6 @@
 extends Button
 
-@export var top_position: Vector3 = Vector3(0.0, 6.0, 0.0)
+@export var top_position: Vector3 = Vector3(0.0, 8.0, 0.0)
 
 var top_view: bool = false
 var default_transform: Transform3D

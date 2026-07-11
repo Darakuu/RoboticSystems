@@ -128,6 +128,7 @@ func _new_line_mesh(node_name: String, material: Material) -> MeshInstance3D:
 	mesh_instance.name = node_name
 	mesh_instance.mesh = ImmediateMesh.new()
 	mesh_instance.material_override = material
+	mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mesh_instance)
 	return mesh_instance
 
@@ -160,7 +161,7 @@ func _update_row(drone_id: int, row: DebugRow, robot: SwarmRobot) -> void:
 
 	row.label.visible = debug_text_visible
 	row.label.global_position = current_position + Vector3.UP * label_height
-	row.label.text = "D%d\n%s\noffset %.2f\nneighbors %d\ntarget %.2f" % [
+	row.label.text = "D%d\nmode: %s\noffset %.2f\nneighbors %d\ntarget %.2f" % [
 		drone_id,
 		_mode_name(mode),
 		_read_float(drone_id, "boids_length"),
@@ -243,4 +244,5 @@ func _line_material(color: Color) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.disable_receive_shadows = true
 	return material
