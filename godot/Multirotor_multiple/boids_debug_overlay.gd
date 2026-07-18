@@ -102,10 +102,10 @@ func toggle_debug_text_visible() -> bool:
 
 func _subscribe_topics() -> void:
 	for drone_id: int in range(max_drones):
-		for name: String in FLOAT_TOPICS:
-			DDS.subscribe(_topic(drone_id, name))
-		for name: String in INT_TOPICS:
-			DDS.subscribe(_topic(drone_id, name))
+		for drone_name: String in FLOAT_TOPICS:
+			DDS.subscribe(_topic(drone_id, drone_name))
+		for drone_name: String in INT_TOPICS:
+			DDS.subscribe(_topic(drone_id, drone_name))
 
 
 func _create_row(drone_id: int) -> DebugRow:
@@ -161,7 +161,7 @@ func _update_row(drone_id: int, row: DebugRow, robot: SwarmRobot) -> void:
 
 	row.label.visible = debug_text_visible
 	row.label.global_position = current_position + Vector3.UP * label_height
-	row.label.text = "D%d\nmode: %s\noffset %.2f\nneighbors %d\ntarget %.2f" % [
+	row.label.text = "D%d\n[boids mode: %s]\n[boids offset: %.2f]\n[neighbors: %d]\n[target dist %.2f]" % [
 		drone_id,
 		_mode_name(mode),
 		_read_float(drone_id, "boids_length"),
@@ -216,16 +216,16 @@ func _read_point(drone_id: int, prefix: String) -> Vector3:
 	return Vector3(y, z, x)
 
 
-func _read_float(drone_id: int, name: String) -> float:
-	return float(DDS.read(_topic(drone_id, name)))
+func _read_float(drone_id: int, drone_name: String) -> float:
+	return float(DDS.read(_topic(drone_id, drone_name)))
 
 
-func _read_int(drone_id: int, name: String) -> int:
-	return int(round(_read_float(drone_id, name)))
+func _read_int(drone_id: int, drone_name: String) -> int:
+	return int(round(_read_float(drone_id, drone_name)))
 
 
-func _topic(drone_id: int, name: String) -> String:
-	return "D%d_%s" % [drone_id, name]
+func _topic(drone_id: int, drone_name: String) -> String:
+	return "D%d_%s" % [drone_id, drone_name]
 
 
 func _material_for_mode(mode: int) -> StandardMaterial3D:

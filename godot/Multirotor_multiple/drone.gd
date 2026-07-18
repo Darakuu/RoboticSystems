@@ -51,8 +51,8 @@ func get_velocity() -> Array[Vector3]:
 
 
 func _apply_motor_force(force: float, motor_position: Vector3) -> void:
-	var basis: Basis = global_transform.basis
-	apply_force(basis * Vector3.UP * force, basis * motor_position)
+	var transform_basis: Basis = global_transform.basis
+	apply_force(basis * Vector3.UP * force, transform_basis * motor_position)
 
 
 func _reset_state() -> void:
